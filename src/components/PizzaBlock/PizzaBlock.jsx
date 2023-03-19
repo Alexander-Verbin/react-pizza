@@ -29,7 +29,7 @@ export const PizzaBlock = ({imageUrl, title, price, sizes, types}) => {
 						sizes.map((size, i) => (
 							<li onClick={()=>setActiveSize(i)}
 									className={activeSize === i ? 'active' : ''}
-									key={i}>
+									key={size}>
 								{size} см.
 							</li>
 						))

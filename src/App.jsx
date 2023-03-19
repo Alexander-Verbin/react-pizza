@@ -22,9 +22,7 @@ export const App = () => {
 					<div className="content__items">
 						{
 							pizzas.map((obj) => (
-								<PizzaBlock {...obj}
-														key={obj.id}
-								/>
+								<PizzaBlock {...obj} key={obj.id}/>
 							))
 						}
 					</div>
