@@ -3,8 +3,9 @@ import {Categories} from "../../components/Categories/Categories";
 import {Sort} from "../../components/Sort/Sort";
 import {Skeleton} from "../../components/Skeleton/Skeleton";
 import {PizzaBlock} from "../../components/PizzaBlock/PizzaBlock";
+import {Pagination} from "../../components/Pagination/Pagination";
 
-export const Home = () => {
+export const Home = ({searchValue}) => {
 	const [pizzas, setPizzas] = useState([]);
 	const [isLoading,setIsLoading] = useState(true);
 	const [categoryId,setCategoryId] = useState(0);
@@ -12,12 +13,15 @@ export const Home = () => {
 		name: 'популярности',
 		sort: 'rating'
 	});
+	const [currentPage,setCurrentPage] = useState(1)
+	const pizzasItems = pizzas.map((obj) => (<PizzaBlock {...obj} key={obj.id}/>))
 
 	useEffect(() => {
 		setIsLoading(true)
-		const order = sortType.sort
-		fetch(`https://642843cd161067a83b0a88cc.mockapi.io/pizzas?category=${categoryId > 0 ? `${categoryId}` : ''}&
-		sortBy=${order.replace('-','')}&order=${order.includes('-') ? 'asc' : 'desc'}`)
+		const order = sortType.sort;
+		const search = searchValue ? `&search=${searchValue}` : '';
+		fetch(`https://642843cd161067a83b0a88cc.mockapi.io/pizzas?page=${currentPage}&limit=4&category=${categoryId > 0 ? `${categoryId}` : ''}&
+		sortBy=${order.replace('-','')}&order=${order.includes('-') ? 'asc' : 'desc'}${search}`)
 			.then((response) => {
 				return response.json()
 			})
@@ -26,7 +30,7 @@ export const Home = () => {
 				setIsLoading(false)
 			})
 		window.scrollTo(0,0)
-	},[categoryId,sortType.sort])
+	},[categoryId,sortType,searchValue,currentPage])
 	return(
 		<div className="container">
 			<div className="content__top">
@@ -37,11 +41,10 @@ export const Home = () => {
 			<div className="content__items">
 				{ isLoading
 					? [...new Array(6)].map((_,index) => <Skeleton key={index}/>)
-					: pizzas.map((obj) => (
-						<PizzaBlock {...obj} key={obj.id}/>
-					))
+					: pizzasItems
 				}
 			</div>
+			<Pagination currentPage={currentPage} onChangePage={(number) => setCurrentPage(number)}/>
 		</div>
 	)
 }
