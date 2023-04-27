@@ -1,20 +1,24 @@
 import React, {useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {setSort} from "../../redux/slices/filterSlice"
 
-export const Sort = ({active,onClickSort}) => {
-	const [open,setOpen] = useState(false);
+export const Sort = ({active, onClickSort}) => {
+	const dispatch = useDispatch();
+	const sort = useSelector(state => state.filter.sort)
+	const [open, setOpen] = useState(false);
 	const list = [
-								{name: 'популярности DESC', sort: 'rating'},
-								{name: 'популярности ASC', sort: '-rating'},
-								{name: 'цене DESC', sort: 'price'},
-								{name: 'цене ASC', sort: '-price'},
-								{name: 'алфавиту DESC', sort: 'title'},
-								{name: 'алфавиту ASC', sort: '-title'}
-							];
-	const onSelect = (index) => {
-		onClickSort(index);
+		{name: 'популярности DESC', sort: 'rating'},
+		{name: 'популярности ASC', sort: '-rating'},
+		{name: 'цене DESC', sort: 'price'},
+		{name: 'цене ASC', sort: '-price'},
+		{name: 'алфавиту DESC', sort: 'title'},
+		{name: 'алфавиту ASC', sort: '-title'}
+	];
+	const onSelect = (obj) => {
+		dispatch(setSort(obj));
 		setOpen(false)
 	};
-  return(
+	return (
 		<div className="sort">
 			<div className="sort__label">
 				<svg
@@ -30,21 +34,21 @@ export const Sort = ({active,onClickSort}) => {
 					/>
 				</svg>
 				<b>Сортировка по:</b>
-				<span onClick={()=> setOpen(!open)}>{active.name}</span>
+				<span onClick={() => setOpen(!open)}>{sort.name}</span>
 			</div>
 			{open && <div className="sort__popup">
-					<ul>
-						{
-							list.map((obj,i) =>(
-								<li className={active.sort === obj.sort ? 'active' : ''}
-										onClick={()=>onSelect(obj)}
-										key={i}>
-									{obj.name}
-								</li>
-							))
-						}
-					</ul>
-				</div>
+				<ul>
+					{
+						list.map((obj, i) => (
+							<li className={sort.name === obj.sort ? 'active' : ''}
+									onClick={() => onSelect(obj)}
+									key={i}>
+								{obj.name}
+							</li>
+						))
+					}
+				</ul>
+			</div>
 			}
 		</div>
 	)
